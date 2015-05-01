@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Jxboy by jabberx</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Jxboy</h1>
+        <h2>virtual game console emulator</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/jabberx/jxboy/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/jabberx/jxboy/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/jabberx/jxboy" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="jxboy---cross-platform-virtual-game-console-emulator" class="anchor" href="#jxboy---cross-platform-virtual-game-console-emulator" aria-hidden="true"><span class="octicon octicon-link"></span></a>JXBOY - cross-platform virtual game console emulator</h1>
+
+<p>Consists of two pages: debug and play (with optional touch controls).</p>
+
+<h2>
+<a id="list-of-games" class="anchor" href="#list-of-games" aria-hidden="true"><span class="octicon octicon-link"></span></a>List of games</h2>
+
+<p>mail your game with description and author name to <a href="mailto:jabberx@ymail.com">jabberx@ymail.com</a>
+and it will be added here</p>
+
+<h3>
+<a id="description-of-the-machine" class="anchor" href="#description-of-the-machine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description of the machine</h3>
+
+<p>1024 bytes RAM (first byte is 8-key keyboard bitmask, next 32 bytes is 16x16 display bitmask)</p>
+
+<p>1024 bytes stack</p>
+
+<p>2048 bytes call stack (1024 return entries)</p>
+
+<p>ROM size: up to 65536 bytes</p>
+
+<p>No registers. One RAM cell pointer.</p>
+
+<h3>
+<a id="machine-codes" class="anchor" href="#machine-codes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Machine codes</h3>
+
+<p>68 possible codes, each code is 1 byte and is printable character.</p>
+
+<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\
+</code></pre>
+
+<p>This includes operations with stack (^y"',_x), simple 8-bit arithmetic (+-/*),</p>
+
+<p>logical operators (&amp;|~%) (% is xor here), copy/swap commands ({}()), far/short calls (@`),</p>
+
+<p>far/short jumps (#:), return using call stack (;), conditional z/nz jumps (?!),</p>
+
+<p>ram pointer movement (&lt;&gt;[]=) and setting values of ram cells ($\0123456789abcdefghijklmnopqrstuv).</p>
+
+<h1>
+<a id="detailed-description" class="anchor" href="#detailed-description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Detailed description:</h1>
+
+<p><code>w nop</code></p>
+
+<p><code>. halt</code></p>
+
+<p><code>^ push</code></p>
+
+<p><code>y pop</code></p>
+
+<p><code>" dup (stack)</code></p>
+
+<p><code>' drop (stack)</code></p>
+
+<p><code>, swap (stack)</code></p>
+
+<p><code>_ clear stack</code></p>
+
+<p><code>x reverse stack</code></p>
+
+<p><code>&lt; move data pointer left</code></p>
+
+<p><code>&gt; move data pointer right</code></p>
+
+<p><code>[ decrease data pointer step /=2</code></p>
+
+<p><code>] increase data pointer step *=2</code></p>
+
+<p><code>z reset data pointer step to 1</code></p>
+
+<p><code>= data ptr = stack.peek(0):stack1.peek(1)</code></p>
+
+<p><code>+ add right, overflow to left</code></p>
+
+<p><code>- sub right, underflow to left</code></p>
+
+<p><code>* mul with right, overflow to left</code></p>
+
+<p><code>/ div to right, remainder to left</code></p>
+
+<p><code>| or to right</code></p>
+
+<p><code>&amp; and to right</code></p>
+
+<p><code>~ not</code></p>
+
+<p><code>% xor to right</code></p>
+
+<p><code>? short jump if zero to 1sb relative offset in a stack</code></p>
+
+<p><code>! short jump if not zero to 1sb relative offset in a stack</code></p>
+
+<p><code>: unconditional short jump to 1sb relative offset in a stack</code></p>
+
+<p><code># far jump (two bytes from stack is address)</code></p>
+
+<p>`<code>short call</code></p>
+
+<p><code>@ far call</code></p>
+
+<p><code>; ret</code></p>
+
+<p><code>{ copy left</code></p>
+
+<p><code>} copy right</code></p>
+
+<p><code>( swap left</code></p>
+
+<p><code>) swap right</code></p>
+
+<p><code># setting ram cell value done with two or one byte,</code></p>
+
+<p><code>for example g0 on some cell will make it 0b00000000,</code></p>
+
+<p><code>i on same cell after that will turn it into 0b00100000</code></p>
+
+<p><code>g = 0000.... | ....0000 = 0</code></p>
+
+<p><code>h = 0001.... | ....0001 = 1</code></p>
+
+<p><code>i = 0010.... | ....0010 = 2</code></p>
+
+<p><code>j = 0011.... | ....0011 = 3</code></p>
+
+<p><code>k = 0100.... | ....0100 = 4</code></p>
+
+<p><code>l = 0101.... | ....0101 = 5</code></p>
+
+<p><code>m = 0110.... | ....0110 = 6</code></p>
+
+<p><code>n = 0111.... | ....0111 = 7</code></p>
+
+<p><code>o = 1000.... | ....1000 = 8</code></p>
+
+<p><code>p = 1001.... | ....1001 = 9</code></p>
+
+<p><code>q = 1010.... | ....1010 = a</code></p>
+
+<p><code>r = 1011.... | ....1011 = b</code></p>
+
+<p><code>s = 1100.... | ....1100 = c</code></p>
+
+<p><code>t = 1101.... | ....1101 = d</code></p>
+
+<p><code>u = 1110.... | ....1110 = e</code></p>
+
+<p><code>v = 1111.... | ....1111 = f</code></p>
+
+<p><code>\ clear cell to 0x00</code></p>
+
+<p><code>$ set cell to 0xFF</code></p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
