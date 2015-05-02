@@ -120,8 +120,10 @@ case 's': m[mp] = (12<<4)|(m[mp]&0b1111); break;
 case 't': m[mp] = (13<<4)|(m[mp]&0b1111); break;
 case 'u': m[mp] = (14<<4)|(m[mp]&0b1111); break;
 case 'v': m[mp] = (15<<4)|(m[mp]&0b1111); break;
-case '\\': m[mp] = 0; break;
-case '$': m[mp]=0xFF; break;
+case '\\': s[sp]=mp&255; sp++; s[sp]=mp>>8; sp++; break;
+case '$': s[sp]=pp&255; sp++; s[sp]=pp>>8; sp++; break;
+case 'I': if (m[mp] == 255) { m[mp] = 0; m[mp-1] = 1; } else { m[mp]+=1;}; break; 
+case 'D': if (m[mp] == 0) { m[mp] = 255; m[mp-1] = 1; } else { m[mp]-=1;}; break;
     }
 }
 
@@ -209,7 +211,7 @@ setInterval(function() {
 <div style='font-family:tahoma; font-size:8px; width:116px'>controls:<br/>left, right, up, down, <br/>space, left shift, x, c</div><br/>
 <div><span style='font-family:monospace; font-size:8px;' id='cmdsp'></span></div>
 <textarea id='code' style='overflow:auto;width:200px;height:200px;right:0;top:0;position:absolute;'>
->nd^$>:
+>nc^vf>:
 </textarea><br/>
 <button id='runbtn'>Run</button>
 <button id='stepbtn'>Step</button>
