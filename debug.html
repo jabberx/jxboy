@@ -345,11 +345,11 @@ function showDebug() {
     di.innerHTML += ', USEMP?:'+using_mp;
     di.innerHTML += ', MP.BAK:'+getBigHex(mp_bak);
     di.innerHTML += "\n\nRAM:\n"
-    for (var i = 0; i < RAM; i++) di.innerHTML+=getHex(m[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    for (var i = 0; i < 256; i++) di.innerHTML+=getHex(m[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
     di.innerHTML += "\nSTACK:\n"
-    for (var i = 0; i < STACK; i++) di.innerHTML+=getHex(s[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    for (var i = 0; i < 256; i++) di.innerHTML+=getHex(s[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
     di.innerHTML += "\nCALLSTACK:\n"
-    for (var i = 0; i < CALL_STACK; i++) di.innerHTML+=getHex(cs[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    for (var i = 0; i < 256; i++) di.innerHTML+=getHex(cs[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
 }
 
 function dbgbtn() {
@@ -477,6 +477,7 @@ $('#cbtn').onmouseup=function() {
 
 $('#dbgbtn').onclick=dbgbtn;
 
+reset();
 createDisplay();
 
 setInterval(function() {
