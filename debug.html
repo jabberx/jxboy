@@ -165,6 +165,7 @@ var daddr = vramb+vrams+10;
 var eaddr = 0;
 var gaddr = vramb+vrams+12;
 var faddr = vramb+vrams+14;
+var showdbg = false;
 
 function getVRAMbit(bitn) {
     return (m[vramb + Math.floor(bitn/8)]&(1<<(bitn%8))) != 0 ? 1 : 0;
@@ -319,6 +320,44 @@ for (var i = 0; i < CALL_STACK; i++) cs[i]=0;
 for (var i = 0; i < STACK; i++) s[i]=0;
 }
 
+//////////////////////
+function getHex(i) {
+    var num = Number(i).toString(16);
+    return (i <= 0xf) ? "0"+num:num;
+}   
+function getBigHex(i) {
+    var num = Number(i).toString(16);
+    if (i <= 0xf) num = "0"+num;
+    if (i <= 0xff) num = "0"+num;
+    if (i <= 0xfff) num = "0"+num;
+    return num;
+}    
+
+function showDebug() {
+    if (!showdbg) return;
+    var di = $('#dbginfo');
+    di.innerHTML = "";
+    di.innerHTML += 'MP:'+getBigHex(mp);
+    di.innerHTML += ', SP:'+getBigHex(sp);
+    di.innerHTML += ', CSP:'+getBigHex(csp);
+    di.innerHTML += ', PP:'+getBigHex(pp);
+    di.innerHTML += ', MSTEP:'+getHex(mstep);
+    di.innerHTML += ', USEMP?:'+using_mp;
+    di.innerHTML += ', MP.BAK:'+getBigHex(mp_bak);
+    di.innerHTML += "\n\nRAM:\n"
+    for (var i = 0; i < RAM; i++) di.innerHTML+=getHex(m[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    di.innerHTML += "\nSTACK:\n"
+    for (var i = 0; i < STACK; i++) di.innerHTML+=getHex(s[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    di.innerHTML += "\nCALLSTACK:\n"
+    for (var i = 0; i < CALL_STACK; i++) di.innerHTML+=getHex(cs[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+}
+
+function dbgbtn() {
+    if (showdbg) $('#dbginfo').innerHTML="";
+    $('#dbgbtn').innerHTML=showdbg?"Show debug":"Hide debug";
+    showdbg = !showdbg;
+}
+
 window.onload = function()
 {
 
@@ -434,6 +473,8 @@ $('#cbtn').onmouseup=function() {
     m[0] &= ~(1<<7);
 }
 
+$('#dbgbtn').onclick=dbgbtn;
+
 createDisplay();
 
 setInterval(function() {
@@ -441,6 +482,7 @@ setInterval(function() {
     for(var i = 0; i < 3200; i++)
         if (!step()) break;
     updateDisplayNew();
+    showDebug();
 }, 100);
 }
 </script>
@@ -474,8 +516,10 @@ setInterval(function() {
 <div style='position:absolute;top:200px; left:156px;font-size:10px'>c</div>
 </div>
 
-<div><span style='font-family:monospace; font-size:8px;color:#fff' id='cmdsp'></span></div>
-<textarea id='code' style='overflow:auto;width:512px;margin-top:10px;height:128px;'>
+
+<div><span style='font-family:monospace; font-size:8px;color:#fff' id='cmdsp;width:600px'></span></div>
+<div style="float:left;margin-top:10px">
+<textarea id='code' style='overflow:auto;width:auto;height:auto;font-size:11px;font-family:monospace;color:#eee;background:#334'>
 >nc^vf>:this program is a sample that just fills all ram bytes with 0b11111111
 > move to 1st video byte
 nc set negative offset for later short jump
@@ -487,5 +531,12 @@ vf set byte to 0xFF
 <button id='runbtn'>Run</button>
 <button id='stepbtn'>Step</button>
 <button id='stopbtn'>Stop</button>
+</div>
+<div style="color:#fff;display:block;float:left;margin-top:10px;margin-left:10px; font-size:10px;color:#fff; font-family:monospace">
+    <button id='dbgbtn'>Show debug</button>
+    <pre id='dbginfo'></pre>
+</div>
+
+
 </body>
 </html>
