@@ -26,9 +26,6 @@
 
     <div class="container">
       <section id="main_content">
-        <h1>
-<a id="jxboy---cross-platform-virtual-game-console-emulator" class="anchor" href="#jxboy---cross-platform-virtual-game-console-emulator" aria-hidden="true"><span class="octicon octicon-link"></span></a>JXBOY - cross-platform virtual game console emulator</h1>
-
 <h2>
 <a id="list-of-games" class="anchor" href="#list-of-games" aria-hidden="true"><span class="octicon octicon-link"></span></a>List of games</h2>
 
@@ -38,7 +35,7 @@ and it will be added here</p>
 <h3>
 <a id="description-of-the-machine" class="anchor" href="#description-of-the-machine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description of the machine</h3>
 
-<p>1024 bytes RAM (first 45 bytes are syste: first byte is 8-key keyboard bitmask, next 32 bytes is 16x16 display bitmask, see system bytes description below)</p>
+<p>1024 bytes RAM (first 45 bytes are system: first byte is 8-key keyboard bitmask, next 32 bytes is 16x16 display bitmask, see other system bytes description below)</p>
 
 <p>1024 bytes stack</p>
 
@@ -53,7 +50,7 @@ and it will be added here</p>
 <h3>
 <a id="machine-codes" class="anchor" href="#machine-codes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Machine codes</h3>
 
-<p>82 possible codes, each code is 1 byte and is printable character.</p>
+<p>Assembler currently is not available, so programming must be done in bytecode. There is 82 possible machine codes, each code is 1 byte and is printable character.</p>
 
 <pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
 </code></pre>
@@ -71,75 +68,75 @@ and it will be added here</p>
 <h1>
 <a id="detailed-description" class="anchor" href="#detailed-description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Detailed description:</h1>
 
-<p><code>w nop</code></p>
+<p><code>w do nothing</code></p>
 
-<p><code>. halt</code></p>
+<p><code>. stop program</code></p>
 
-<p><code>^ push</code></p>
+<p><code>^ push value from current RAM cell to a stack</code></p>
 
-<p><code>y pop</code></p>
+<p><code>y pop value from stack to a current RAM cell</code></p>
 
-<p><code>" dup (stack)</code></p>
+<p><code>" duplicate value on stack</code></p>
 
-<p><code>' drop (stack)</code></p>
+<p><code>' drop value from stack</code></p>
 
-<p><code>, swap (stack)</code></p>
+<p><code>, swap two last stack values</code></p>
 
 <p><code>_ clear stack</code></p>
 
 <p><code>x reverse stack</code></p>
 
-<p><code>&lt; move data pointer left</code></p>
+<p><code>&lt; move RAM pointer left</code></p>
 
-<p><code>&gt; move data pointer right</code></p>
+<p><code>&gt; move RAM pointer right</code></p>
 
-<p><code>[ decrease data pointer step /=2</code></p>
+<p><code>[ decrease RAM pointer step /=2</code></p>
 
-<p><code>] increase data pointer step *=2</code></p>
+<p><code>] increase RAM pointer step *=2</code></p>
 
-<p><code>z reset data pointer step to 1</code></p>
+<p><code>z reset RAM pointer step to 1</code></p>
 
-<p><code>= data ptr = stack.peek(0):stack1.peek(1)</code></p>
+<p><code>= set RAM pointer to 2-byte address from stack (high byte is on top of stack:low byte is next)</code></p>
 
-<p><code>+ add right, wrap, set O to 1 if overflow</code></p>
+<p><code>+ add to the current RAM cell value value of right RAM cell, crop to 8bit, set O (overflow cell) to 1 if overflow, to 0 if not</code></p>
 
-<p><code>- sub right, wrap and set N to 1 if negative</code></p>
+<p><code>- substract right RAM cell value from current RAM cell value, wrap and set N to 1 or 0 (1 if negative)</code></p>
 
-<p><code>* mul with right, high byte will go to O</code></p>
+<p><code>* multiply with right cell, result in current cell, high byte to O (overflow) cell</code></p>
 
-<p><code>/ div to right, remainder to G</code></p>
+<p><code>/ div to right, quotient after dot (multiplied by 100) will go to G cell</code></p>
 
-<p><code>| or to right</code></p>
+<p><code>| or with right cell value</code></p>
 
-<p><code>&amp; and to right</code></p>
+<p><code>&amp; and with right cell value</code></p>
 
-<p><code>~ not</code></p>
+<p><code>~ not current cell value</code></p>
 
-<p><code>% xor to right</code></p>
+<p><code>% xor with right cell value</code></p>
 
-<p><code>? short jump if zero to 1sb relative offset in a stack</code></p>
+<p><code>? short jump if zero to a relative 1-byte offset in a stack (value - 127)</code></p>
 
-<p><code>! short jump if not zero to 1sb relative offset in a stack</code></p>
+<p><code>! short jump if not zero to a relative 1-byte offset in a stack (value - 127)</code></p>
 
-<p><code>: unconditional short jump to 1sb relative offset in a stack</code></p>
+<p><code>: non-conditional short jump</code></p>
 
-<p><code># far jump (two bytes from stack is address)</code></p>
+<p><code># far jump (two bytes from stack is address (high byte is on top of stack:low byte is next))</code></p>
 
 <p>`<code>short call</code></p>
 
-<p><code>@ far call</code></p>
+<p><code>@ far call (address: high byte is on top of stack:low byte is next)</code></p>
 
-<p><code>; ret</code></p>
+<p><code>; return from last call (be aware of call stack depth)</code></p>
 
-<p><code>{ copy left</code></p>
+<p><code>{ copy current cell to left cell</code></p>
 
-<p><code>} copy right</code></p>
+<p><code>} copy current cell to right cell</code></p>
 
-<p><code>( swap left</code></p>
+<p><code>( swap with left cell</code></p>
 
-<p><code>) swap right</code></p>
+<p><code>) swap with right cell</code></p>
 
-<p><code># setting ram cell value done with two or one byte,</code></p>
+<p><code>Setting ram cell value is done with two or one byte,</code></p>
 
 <p><code>for example g0 on some cell will make it 0b00000000,</code></p>
 
@@ -179,29 +176,29 @@ and it will be added here</p>
 
 <p><code>\ push program pointer address to a stack (low then high)</code></p>
 
-<p><code>$ push data pointer address to a stack</code></p>
+<p><code>$ push data pointer address to a stack  (low then high)</code></p>
 
-<p><code>I increase by 1</code></p>
+<p><code>I increase current cell value by 1, set O flag accordingly</code></p>
 
-<p><code>D decrease by 1</code></p>
+<p><code>D decrease current cell value by 1, set N flag accordingly</code></p>
 
 <p><code>L left shift (1), O will be set to 0 or 1 (if overflow)</code></p>
 
 <p><code>R right shift (1)</code></p>
 
 <p><b>Memory pointer shortcuts:</b></p>
-<p><code>N use negative flag byte intead of RAM pointer</code></p>
-<p><code>O use overflow flag byte instead of RAM pointer</code></p>
-<p><code>G use division additional result byte instead of RAM pointer</code></p>
-<p><code>A use addr:1+32+5 instead of RAM pointer</code></p>
-<p><code>B use addr:1+32+7 instead of RAM pointer</code></p>
-<p><code>C use addr:1+32+9 instead of RAM pointer</code></p>
-<p><code>J use addr:1+32+11 instead of RAM pointer</code></p>
-<p><code>K use addr:1+32+13 instead of RAM pointer</code></p>
-<p><code>M restore using RAM pointer</code></p>
-<p><code>F set RAM pointer to addr:1+32+17 (first unused byte)</code></p>
+<p><code>N jump to negative flag cell, remember current RAM pointer address</code></p>
+<p><code>O jump to overflow flag cell, remember current RAM pointer address</code></p>
+<p><code>G jump to division fractional result flag cell, remember current RAM pointer address</code></p>
+<p><code>A jump to A shortcut cell, remember current RAM pointer address</code></p>
+<p><code>B jump to B shortcut cell, remember current RAM pointer address</code></p>
+<p><code>C jump to C shortcut cell, remember current RAM pointer address</code></p>
+<p><code>J jump to J shortcut cell, remember current RAM pointer address</code></p>
+<p><code>K jump to K shortcut cell, remember current RAM pointer address</code></p>
+<p><code>M restore RAM pointer address</code></p>
+<p><code>F jump to a first free (non-system/no shortcut) RAM byte, RAM pointer address will be lost</code></p>
 
-<div style="clear:both;">
+<div style="clear:both;font-size:10px">
 <b>RAM layout</b>:<br/>
 input byte (1) - video bytes (32) - neg byte (1)<br/> 
 - overflow byte (1) - quotient after dot byte (1)<br/>
