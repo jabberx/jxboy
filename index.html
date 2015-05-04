@@ -55,9 +55,9 @@ and it will be added here</p>
 <h3>
 <a id="machine-codes" class="anchor" href="#machine-codes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Machine codes</h3>
 
-<p>68 possible codes, each code is 1 byte and is printable character.</p>
+<p>82 possible codes, each code is 1 byte and is printable character.</p>
 
-<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\
+<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
 </code></pre>
 
 <p>This includes operations with stack (^y"',_x), simple 8-bit arithmetic (+-/*),</p>
@@ -67,6 +67,8 @@ and it will be added here</p>
 <p>far/short jumps (#:), return using call stack (;), conditional z/nz jumps (?!),</p>
 
 <p>ram pointer movement (&lt;&gt;[]=) and setting values of ram cells ($\0123456789abcdefghijklmnopqrstuv).</p>
+
+<p>ram pointer shortcut system (ABCJK NOG F NOG M)</p>
 
 <h1>
 <a id="detailed-description" class="anchor" href="#detailed-description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Detailed description:</h1>
@@ -101,13 +103,13 @@ and it will be added here</p>
 
 <p><code>= data ptr = stack.peek(0):stack1.peek(1)</code></p>
 
-<p><code>+ add right, overflow to left</code></p>
+<p><code>+ add right, wrap, set O to 1 if overflow</code></p>
 
-<p><code>- sub right, underflow to left</code></p>
+<p><code>- sub right, wrap and set N to 1 if negative</code></p>
 
-<p><code>* mul with right, overflow to left</code></p>
+<p><code>* mul with right, high byte will go to O</code></p>
 
-<p><code>/ div to right, remainder to left</code></p>
+<p><code>/ div to right, remainder to G</code></p>
 
 <p><code>| or to right</code></p>
 
@@ -184,6 +186,33 @@ and it will be added here</p>
 <p><code>I increase by 1</code></p>
 
 <p><code>D decrease by 1</code></p>
+
+<p><code>L left shift (1), O will be set to 0 or 1 (if overflow)</code></p>
+
+<p><code>R right shift (1)</code></p>
+
+<p><b>Memory pointer shortcuts:</b></p>
+<p><code>N use negative flag byte intead of RAM pointer</code></p>
+<p><code>O use overflow flag byte instead of RAM pointer</code></p>
+<p><code>G use division additional result byte instead of RAM pointer</code></p>
+<p><code>A use addr:1+32+5 instead of RAM pointer</code></p>
+<p><code>B use addr:1+32+7 instead of RAM pointer</code></p>
+<p><code>C use addr:1+32+9 instead of RAM pointer</code></p>
+<p><code>J use addr:1+32+11 instead of RAM pointer</code></p>
+<p><code>K use addr:1+32+13 instead of RAM pointer</code></p>
+<p><code>M restore using RAM pointer</code></p>
+<p><code>F set RAM pointer to addr:1+32+17 (first unused byte)</code></p>
+
+<div style="clear:both;">
+<b>RAM layout</b>:<br/>
+input byte (1) - video bytes (32) - neg byte (1)<br/> 
+- overflow byte (1) - quotient after dot byte (1)<br/>
+- A shortcut (1) - empty (1) - B shortcut (1) - empty (1)<br/>
+- C shortcut (1) - empty (1) - J shortcut (1) - empty (1)<br/>
+- F shortcut (1) - empty(979)<br/>
+</div>
+
+
       </section>
     </div>
 
