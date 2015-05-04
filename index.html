@@ -202,8 +202,8 @@ g0 can be stripped if you are sure that A contains zero: _A^^K}#<br/>
 
 <p><b>Memory pointer shortcuts:</b></p>
 <p><code>N jump to negative flag cell, remember current RAM pointer address</code></p>
-<p><code>O jump to overflow flag cell, remember current RAM pointer address</code></p>
-<p><code>G jump to division fractional result flag cell, remember current RAM pointer address</code></p>
+<p><code>O jump to overflow cell, remember current RAM pointer address</code></p>
+<p><code>G jump to fractional division result cell, remember current RAM pointer address</code></p>
 <p><code>A jump to A shortcut cell, remember current RAM pointer address</code></p>
 <p><code>B jump to B shortcut cell, remember current RAM pointer address</code></p>
 <p><code>C jump to C shortcut cell, remember current RAM pointer address</code></p>
@@ -215,7 +215,7 @@ g0 can be stripped if you are sure that A contains zero: _A^^K}#<br/>
 <div style="clear:both;font-size:10px">
 <b>RAM layout</b>:<br/>
 input byte (K shortcut) (1) - video bytes (32) - neg byte (1)<br/> 
-- overflow byte (1) - quotient after dot byte (1)<br/>
+- overflow byte (1) - fractional division result byte (1)<br/>
 - A shortcut (1) - empty (1) - B shortcut (1) - empty (1)<br/>
 - J shortcut (1) - empty (1) - F shortcut (1) - empty(...rest of ram...)<br/>
 </div>
