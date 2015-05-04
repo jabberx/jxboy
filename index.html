@@ -194,17 +194,16 @@ and it will be added here</p>
 <p><code>B jump to B shortcut cell, remember current RAM pointer address</code></p>
 <p><code>C jump to C shortcut cell, remember current RAM pointer address</code></p>
 <p><code>J jump to J shortcut cell, remember current RAM pointer address</code></p>
-<p><code>K jump to K shortcut cell, remember current RAM pointer address</code></p>
+<p><code>K jump to K shortcut cell (keyboard byte), remember current RAM pointer address</code></p>
 <p><code>M restore RAM pointer address</code></p>
 <p><code>F jump to a first free (non-system/no shortcut) RAM byte, RAM pointer address will be lost</code></p>
 
 <div style="clear:both;font-size:10px">
 <b>RAM layout</b>:<br/>
-input byte (1) - video bytes (32) - neg byte (1)<br/> 
+input byte (K shortcut) (1) - video bytes (32) - neg byte (1)<br/> 
 - overflow byte (1) - quotient after dot byte (1)<br/>
 - A shortcut (1) - empty (1) - B shortcut (1) - empty (1)<br/>
-- C shortcut (1) - empty (1) - J shortcut (1) - empty (1)<br/>
-- F shortcut (1) - empty(979)<br/>
+- J shortcut (1) - empty (1) - F shortcut (1) - empty(...rest of ram...)<br/>
 </div>
 
 
