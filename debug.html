@@ -476,7 +476,13 @@ setInterval(function() {
 
 <div><span style='font-family:monospace; font-size:8px;color:#fff' id='cmdsp'></span></div>
 <textarea id='code' style='overflow:auto;width:512px;margin-top:10px;height:128px;'>
->nc^vf>:>nc^vf>:this program is a sample that just fills all ram bytes with 0b11111111
+>nc^vf>:this program is a sample that just fills all ram bytes with 0b11111111
+> move to 1st video byte
+nc set negative offset for later short jump
+^ push offset
+vf set byte to 0xFF
+> move to next byte
+: short jump back
 </textarea><br/>
 <button id='runbtn'>Run</button>
 <button id='stepbtn'>Step</button>
