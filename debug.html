@@ -141,6 +141,11 @@ var stepping = true;
 var m = [];
 var s = [];
 var cs = [];
+
+for (var i = 0; i < RAM; i++) m[i]=0;
+for (var i = 0; i < CALL_STACK; i++) cs[i]=0;
+for (var i = 0; i < STACK; i++) s[i]=0;
+
 var mp = 0;
 var mp_bak = 0;
 var sp = 0;
