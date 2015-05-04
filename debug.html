@@ -155,15 +155,15 @@ var dw = 16;
 var dh = 16;
 var code = "";
 var using_mp = true;
-var naddr = vramb+vrams+1;
-var oaddr = vramb+vrams+3;
-var aaddr = vramb+vrams+5;
-var baddr = vramb+vrams+7; 
-var caddr = vramb+vrams+9; 
-var daddr = vramb+vrams+11;
-var eaddr = vramb+vrams+13;
-var faddr = vramb+vrams+17;
-var gaddr = vramb+vrams+15;
+var naddr = vramb+vrams+0;
+var oaddr = vramb+vrams+2;
+var aaddr = vramb+vrams+4;
+var baddr = vramb+vrams+6; 
+var caddr = vramb+vrams+8; 
+var daddr = 0;
+var eaddr = vramb+vrams+10;
+var gaddr = vramb+vrams+12;
+var faddr = vramb+vrams+14;
 
 function getVRAMbit(bitn) {
     return (m[vramb + Math.floor(bitn/8)]&(1<<(bitn%8))) != 0 ? 1 : 0;
