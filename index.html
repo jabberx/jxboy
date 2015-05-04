@@ -32,6 +32,19 @@
 <p>mail your game with description and author name to <a href="mailto:jabberx@ymail.com">jabberx@ymail.com</a>
 and it will be added here</p>
 
+<b>sample program:</b>
+_Ag0^^K}# - loop for debugging keyboard presses in first 8 display cells
+explanation:
+_ clear stack
+A jump to A cell
+g set high 4bit to 0
+0 set low 4bit to 0
+^ push current ram value (0) to stack
+^ push current ram value (0) to stack
+K jump to K cell (keyboard)
+} copy content of K to the next byte (first 8 pixels byte)
+# far jump to address from stack (0x0000) - to the beginning
+
 <h3>
 <a id="description-of-the-machine" class="anchor" href="#description-of-the-machine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description of the machine</h3>
 
