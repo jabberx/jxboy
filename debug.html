@@ -334,7 +334,7 @@ function getBigHex(i) {
 }    
 
 function showDebug() {
-    if (!showdbg) return;
+    if (!showdbg || !stepping) return;
     var di = $('#dbginfo');
     di.innerHTML = "";
     di.innerHTML += 'MP:'+getBigHex(mp);
@@ -400,6 +400,7 @@ document.onkeyup=function(event){
 
 $('#runbtn').onclick = function() {
     stepping = false;
+    $('#dbginfo').innerHTML = "";
     code=$('#code').value;
     reset();
     $('#runbtn').blur();
