@@ -126,7 +126,6 @@ body {
 }
 </style>
 <script>
-window.resizeTo(600,260);
 
 function $(req) {
     if (req.indexOf('#')===0) 
@@ -304,6 +303,23 @@ case 'L' : m[mp] <<= 1; m[oaddr] = m[mp] > 255 ? 1 : 0; m[mp] &= 255; break;
     }
 }
 
+
+function reset() {
+     m = [];
+    s = [];
+    cs = [];
+    mp = 0;
+    sp = 0;
+    csp = 0;
+    pp = 0;
+    mstep = 1;   
+}
+
+window.onload = function()
+{
+
+window.resizeTo(600,260);
+
 document.onkeydown=function(event){
     switch(event.keyCode) {
         case 37:            $('#leftbtn').className='btnpressed'; 
@@ -340,16 +356,6 @@ document.onkeyup=function(event){
     console.log(event.keyCode);
 }
 
-function reset() {
-     m = [];
-    s = [];
-    cs = [];
-    mp = 0;
-    sp = 0;
-    csp = 0;
-    pp = 0;
-    mstep = 1;   
-}
 
 $('#runbtn').onclick = function() {
     stepping = false;
@@ -434,6 +440,7 @@ setInterval(function() {
         if (!step()) break;
     updateDisplayNew();
 }, 100);
+}
 </script>
 </head>
 <body>
