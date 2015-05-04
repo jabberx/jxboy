@@ -412,6 +412,7 @@ function step() {
     if (sp>=STACK) sp = 0;
     if (csp>=CALL_STACK) csp = 0;
     pp++;
+    showDebug();
     if (pp > code.length-1) return false;
     return true;
     return false;
@@ -482,7 +483,6 @@ setInterval(function() {
     for(var i = 0; i < 3200; i++)
         if (!step()) break;
     updateDisplayNew();
-    showDebug();
 }, 100);
 }
 </script>
