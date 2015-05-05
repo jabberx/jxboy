@@ -1,0 +1,547 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<style>
+#outer {    
+    -webkit-box-shadow: 0px 0px 2px #000000;
+    -moz-box-shadow: 0px 0px 2px #000000;
+    box-shadow: 0px 0px 2px #000000;
+    border-radius:4px;
+    border:2px solid #e5bb22;
+    width:100%;
+    height:260px;
+    background-color: #fb0;
+}
+.cell {
+    margin:0px;
+    width:13px;
+    height:13px;
+    display:inline-block;
+    float:left;
+    background-image: url("http://s10.postimg.org/mq7do8u0l/cellon.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.cellinner {
+}
+.empty {
+    margin:0px;
+    width:13px;
+    height:13px;
+    display:inline-block;
+    float:left;
+    background-image: url("http://s3.postimg.org/fqvhxx5n3/celloff.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.emptyinner {
+}
+#cells {
+    font-size:12px;
+    font-family:monospace;
+    font-weight:bold;
+    letter-spacing:1.2px;
+    line-height:7px;
+    margin-left:auto;
+    margin-right:auto;
+    position:absolute;
+    top:30px;
+    border-left:3px solid gray;
+    border-right:3px solid gray;
+    border-top:3px solid black;
+    border-bottom:3px solid black;
+    left:210px;
+    width:208.5px;
+    padding-left:0.5px;
+    height:209px;
+    text-align:center;
+    background-color:#bbbbab;
+}
+body {
+    background-color: #000;
+    width:620px;
+}
+.btn {
+    background: #fff308;
+    background-image: -webkit-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -moz-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -ms-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -o-linear-gradient(top, #fff308, #ffbf00);
+    background-image: linear-gradient(to bottom, #fff308, #ffbf00);
+    -webkit-border-radius: 60;
+    -moz-border-radius: 60;
+    border-radius: 60px;
+    -webkit-box-shadow: 0px 0px 9px #000000;
+    -moz-box-shadow: 0px 0px 9px #000000;
+    box-shadow: 0px 0px 9px #000000;
+    font-family: Arial;
+    color: #000;
+    font-size: 12px;
+    padding: 15px 20px 15px 20px;
+    border: solid #8c7a1f 1px;
+    text-decoration: none;
+}
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+* {
+    font-family:monospace;
+}
+.btn:active {
+    -webkit-box-shadow: 0px 0px 2px #000000;
+    -moz-box-shadow: 0px 0px 2px #000000;
+    box-shadow: 0px 0px 2px #000000;
+        border: double #e5bb22 2px;
+}
+.btnpressed {
+        background: #fff308;
+    background-image: -webkit-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -moz-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -ms-linear-gradient(top, #fff308, #ffbf00);
+    background-image: -o-linear-gradient(top, #fff308, #ffbf00);
+    background-image: linear-gradient(to bottom, #fff308, #ffbf00);
+    -webkit-border-radius: 60;
+    -moz-border-radius: 60;
+    border-radius: 60px;
+    font-family: Arial;
+    color: #000;
+    font-size: 12px;
+    padding: 15px 20px 15px 20px;
+    text-decoration: none;
+    -webkit-box-shadow: 0px 0px 2px #000000;
+    -moz-box-shadow: 0px 0px 2px #000000;
+    box-shadow: 0px 0px 2px #000000;
+        border: double #e5bb22 2px;
+}
+</style>
+<script>
+
+function $(req) {
+    if (req.indexOf('#')===0) 
+        return document.getElementById(req.substring(1));
+    return document.getElementsByClassName(req.substring(1));
+}
+
+const RAM = 1024;
+const CALL_STACK = 2048;
+const STACK = 1024;
+
+var stepping = true;
+var m = [];
+var s = [];
+var cs = [];
+
+var mp = 0;
+var mp_bak = 0;
+var sp = 0;
+var csp = 0;
+var pp = 0;
+var mstep = 1;
+var d1 = '<div class="cell"><div class="cellinner"></div></div>';
+var d0 = '<div class="empty"><div class="emptyinner"></div></div>';
+var vramb = 1;
+var vrams = 16*16/8;
+var dw = 16;
+var dh = 16;
+var code = "";
+var using_mp = true;
+var naddr = vramb+vrams+0;
+var oaddr = vramb+vrams+2;
+var aaddr = vramb+vrams+4;
+var baddr = vramb+vrams+6; 
+var caddr = vramb+vrams+8; 
+var daddr = vramb+vrams+10;
+var eaddr = 0;
+var gaddr = vramb+vrams+12;
+var faddr = vramb+vrams+14;
+var showdbg = false;
+
+function getVRAMbit(bitn) {
+    return (m[vramb + Math.floor(bitn/8)]&(1<<(bitn%8))) != 0 ? 1 : 0;
+}
+
+function createDisplay() {
+    var cells = $('#cells');
+    cells.innerHTML = "";
+    for (var y = 0; y < dh; y++)
+        for (var x = 0; x < dw; x++)
+            cells.innerHTML += 
+                "<div id='cell"+x+"_"+y+
+                "' class='cell'><div id='icell"+x+"_"+y+"' class='cellinner'></div></div>"
+                +
+                (x == dw-1 ? "<br clear='left'/>" : '');
+}
+
+function updateDisplayNew() {
+    var cells = $('#cells');
+    for (var y = 0; y < dh; y++)
+        for (var x = 0; x < dw; x++)
+        {
+            var bit = getVRAMbit(x+y*dw);
+            var cell = $("#cell"+x+"_"+y);
+            if (bit == 1) {
+            if (cell.className != "cell")
+            {
+                            var icell = $("#icell"+x+"_"+y);
+                cell.className = "cell";
+                icell.className = "cellinner";
+            }
+            }else{
+                if (cell.className != "empty")
+            {
+                var icell = $("#icell"+x+"_"+y);
+                cell.className = "empty";
+                icell.className = "emptyInner";
+            }
+            }
+        }
+}
+
+function updateDisplay() {
+    var cells = $('#cells');
+    cells.innerHTML = "";
+    for (var y = 0; y < dh; y++)
+        for (var x = 0; x < dw; x++)
+            cells.innerHTML += 
+                (getVRAMbit(x+y*dw) == 1 ? d1 : d0) +
+                (x == dw-1 ? "<br clear='left'/>" : '');
+}
+
+function runcmd(cmd) {
+    switch(cmd) {
+case 'w': break;
+case '.': pp = pp-1; break;
+case '^': s[sp] = m[mp]; sp++; break;
+case 'y': sp--; m[mp] = s[sp]; break;
+case '"': s[sp] = s[sp-1]; sp++; break;
+case '\'': sp--; break;
+case ',': var temp=sp[sp-1];sp[sp-1]=sp[sp-2];sp[sp-2]=temp; break;
+case '_': sp=0; break;
+case 'x': s = s.slice(0,sp); s.reverse(); for (var i=sp; i<STACK; i++) s[i]=0; break;
+case '<': mp-=mstep; break;
+case '>': mp+=mstep; break;
+case '[': mstep/=2; mstep=mstep<1?1:mstep; break;
+case ']': mstep*=2; break;
+case 'z': mstep=1; break;
+case '=': mp=s[sp-2]+(s[sp-1]<<8); break;
+case '+': var i=m[mp]+m[mp+1];m[mp]=i&255;m[oaddr]=(i-m[mp])>>8; break;
+case '-': var i=m[mp]-m[mp+1];m[mp]=i&255;m[naddr]=i>=0?0:255-m[mp]; break;
+case '*': var i=m[mp]*m[mp+1];m[mp]=i&255;m[oaddr]=(i-m[mp])>>8; break;
+case '/': var i=m[mp]/m[mp+1];m[mp]=Math.floor(i);m[gaddr]=(i-Math.floor(i))*100; break;
+case '|': m[mp] |= m[mp+1]; break;
+case '&': m[mp] &= m[mp+1]; break;
+case '~': m[mp] = ~m[mp]; break;
+case '%': m[mp] ^= m[mp+1]; break;
+case '?': pp = m[mp]==0 ? pp + s[sp-1]-127-1 : pp; sp--; break;
+case '!': pp = m[mp]!=0 ? pp + s[sp-1]-127-1 : pp; sp--; break;
+case ':': pp += s[sp-1]-127-1; sp--; break;
+case '#': pp = (s[sp-2]+(s[sp-1]<<8))-1; sp--; sp--; break;
+case '`': cs[csp] = pp; csp++; pp += s[sp-1]-127-1; sp--; break;
+case '@': cs[csp] = pp; csp++; pp = (s[sp-2]+(s[sp-1]<<8))-1; sp--; sp--; break;
+case ';': pp = cs[csp-1]-1; csp--; break;
+case '{': m[mp-1] = m[mp]; break;
+case '}': m[mp+1] = m[mp]; break;
+case '(': var temp=m[mp-1];m[mp-1]=m[mp];m[mp]=temp; break;
+case ')': var temp=m[mp+1];m[mp+1]=m[mp];m[mp]=temp; break;
+case '0': m[mp] = (m[mp]&0b11110000) | 0; break;
+case '1': m[mp] = (m[mp]&0b11110000) | 1; break;
+case '2': m[mp] = (m[mp]&0b11110000) | 2; break;
+case '3': m[mp] = (m[mp]&0b11110000) | 3; break;
+case '4': m[mp] = (m[mp]&0b11110000) | 4; break;
+case '5': m[mp] = (m[mp]&0b11110000) | 5; break;
+case '6': m[mp] = (m[mp]&0b11110000) | 6; break;
+case '7': m[mp] = (m[mp]&0b11110000) | 7; break;
+case '8': m[mp] = (m[mp]&0b11110000) | 8; break;
+case '9': m[mp] = (m[mp]&0b11110000) | 9; break;
+case 'a': m[mp] = (m[mp]&0b11110000) | 0xa; break;
+case 'b': m[mp] = (m[mp]&0b11110000) | 0xb; break;
+case 'c': m[mp] = (m[mp]&0b11110000) | 0xc; break;
+case 'd': m[mp] = (m[mp]&0b11110000) | 0xd; break;
+case 'e': m[mp] = (m[mp]&0b11110000) | 0xe; break;
+case 'f': m[mp] = (m[mp]&0b11110000) | 0xf; break;
+case 'g': m[mp] = (0<<4)|(m[mp]&0b1111); break;
+case 'h': m[mp] = (1<<4)|(m[mp]&0b1111); break;
+case 'i': m[mp] = (2<<4)|(m[mp]&0b1111); break;
+case 'j': m[mp] = (3<<4)|(m[mp]&0b1111); break;
+case 'k': m[mp] = (4<<4)|(m[mp]&0b1111); break;
+case 'l': m[mp] = (5<<4)|(m[mp]&0b1111); break;
+case 'm': m[mp] = (6<<4)|(m[mp]&0b1111); break;
+case 'n': m[mp] = (7<<4)|(m[mp]&0b1111); break;
+case 'o': m[mp] = (8<<4)|(m[mp]&0b1111); break;
+case 'p': m[mp] = (9<<4)|(m[mp]&0b1111); break;
+case 'q': m[mp] = (10<<4)|(m[mp]&0b1111); break;
+case 'r': m[mp] = (11<<4)|(m[mp]&0b1111); break;
+case 's': m[mp] = (12<<4)|(m[mp]&0b1111); break;
+case 't': m[mp] = (13<<4)|(m[mp]&0b1111); break;
+case 'u': m[mp] = (14<<4)|(m[mp]&0b1111); break;
+case 'v': m[mp] = (15<<4)|(m[mp]&0b1111); break;
+case '\\': s[sp]=mp&255; sp++; s[sp]=mp>>8; sp++; break;
+case '$': s[sp]=pp&255; sp++; s[sp]=pp>>8; sp++; break;
+case 'I': if (m[mp] == 255) { m[mp] = 0; m[oaddr] = 1; } else { m[mp]+=1; m[oaddr]=0; }; break; 
+case 'D': if (m[mp] == 0) { m[mp] = 255; m[naddr] = 1; } else { m[mp]-=1; m[naddr]=0; }; break;
+case 'N' : if (using_mp) mp_bak = mp; mp = naddr; using_mp = false; break;
+case 'O' : if (using_mp) mp_bak = mp; mp = oaddr; using_mp = false; break;
+case 'A' : if (using_mp) mp_bak = mp; mp = aaddr; using_mp = false; break;
+case 'B' : if (using_mp) mp_bak = mp; mp = baddr; using_mp = false; break;
+case 'C' : if (using_mp) mp_bak = mp; mp = caddr; using_mp = false; break;
+case 'J' : if (using_mp) mp_bak = mp; mp = daddr; using_mp = false; break;
+case 'K' : if (using_mp) mp_bak = mp; mp = eaddr; using_mp = false; break;
+case 'F' : if (!using_mp) mp = mp_bak; mp = faddr; using_mp = true; break;
+case 'G' : if (using_mp) mp_bak = mp; mp = gaddr; using_mp = false; break;
+case 'M' : if (!using_mp) mp = mp_bak; using_mp = true; break;
+case 'R' : m[mp] >>= 1; break;
+case 'L' : m[mp] <<= 1; m[oaddr] = m[mp] > 255 ? 1 : 0; m[mp] &= 255; break;
+    }
+}
+
+
+function reset() {
+     m = [];
+    s = [];
+    cs = [];
+    mp = 0;
+    sp = 0;
+    csp = 0;
+    pp = 0;
+    mstep = 1;   
+for (var i = 0; i < RAM; i++) m[i]=0;
+for (var i = 0; i < CALL_STACK; i++) cs[i]=0;
+for (var i = 0; i < STACK; i++) s[i]=0;
+}
+
+//////////////////////
+function getHex(i) {
+    var num = Number(i).toString(16);
+    return (i <= 0xf) ? "0"+num:num;
+}   
+function getBigHex(i) {
+    var num = Number(i).toString(16);
+    if (i <= 0xf) num = "0"+num;
+    if (i <= 0xff) num = "0"+num;
+    if (i <= 0xfff) num = "0"+num;
+    return num;
+}    
+
+function showDebug() {
+    if (!showdbg || !stepping) return;
+    var di = $('#dbginfo');
+    di.innerHTML = "";
+    di.innerHTML += 'MP:'+getBigHex(mp);
+    di.innerHTML += ', SP:'+getBigHex(sp);
+    di.innerHTML += ', CSP:'+getBigHex(csp);
+    di.innerHTML += ', PP:'+getBigHex(pp);
+    di.innerHTML += ', MSTEP:'+getHex(mstep);
+    di.innerHTML += ', USEMP?:'+using_mp;
+    di.innerHTML += ', MP.BAK:'+getBigHex(mp_bak);
+    di.innerHTML += "\n\nRAM (first 512 bytes):\n"
+    for (var i = 0; i < 512; i++) di.innerHTML+=getHex(m[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    di.innerHTML += "\nSTACK (first 512 bytes):\n"
+    for (var i = 0; i < 512; i++) di.innerHTML+=getHex(s[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+    di.innerHTML += "\nCALLSTACK (first 512 bytes):\n"
+    for (var i = 0; i < 512; i++) di.innerHTML+=getHex(cs[i])+" "+(i!=0&&(i+1)%64==0?'\n':'');
+}
+
+function dbgbtn() {
+    if (showdbg) $('#dbginfo').innerHTML="";
+    $('#dbgbtn').innerHTML=showdbg?"Show debug":"Hide debug";
+    showdbg = !showdbg;
+}
+
+window.onload = function()
+{
+
+document.onkeydown=function(event){
+    switch(event.keyCode) {
+        case 37:            $('#leftbtn').className='btnpressed'; 
+            m[0] |= 1<<0; break;
+            
+        case 39: $('#rightbtn').className='btnpressed';m[0] |= 1<<1; break;
+            
+        case 38: $('#upbtn').className='btnpressed';m[0] |= 1<<2; break;
+            
+        case 40: $('#downbtn').className='btnpressed';m[0] |= 1<<3; break;
+            
+        case 32: $('#spacebtn').className='btnpressed';m[0] |= 1<<4; break;
+            
+        case 16: $('#lshiftbtn').className='btnpressed';m[0] |= 1<<5; break;
+            
+        case 88: $('#xbtn').className='btnpressed';m[0] |= 1<<6; break;
+            
+        case 67: $('#cbtn').className='btnpressed';m[0] |= 1<<7; break;
+            
+    }
+}
+
+document.onkeyup=function(event){
+    switch(event.keyCode) {
+        case 37: $('#leftbtn').className='btn';m[0] &= ~(1<<0); break;
+        case 39: $('#rightbtn').className='btn';m[0] &= ~(1<<1); break;
+        case 38: $('#upbtn').className='btn';m[0] &= ~(1<<2); break;
+        case 40: $('#downbtn').className='btn';m[0] &= ~(1<<3); break;
+        case 32: $('#spacebtn').className='btn';m[0] &= ~(1<<4); break;
+        case 16: $('#lshiftbtn').className='btn';m[0] &= ~(1<<5); break;
+        case 88: $('#xbtn').className='btn';m[0] &= ~(1<<6); break;
+        case 67: $('#cbtn').className='btn';m[0] &= ~(1<<7); break;
+    }
+    console.log(event.keyCode);
+}
+
+
+$('#runbtn').onclick = function() {
+    stepping = false;
+    $('#dbginfo').innerHTML = "";
+    code=$('#code').value;
+    reset();
+    $('#runbtn').blur();
+}
+
+function step() {
+    $('#cmdsp').innerHTML = code[pp];
+    runcmd(code[pp]);
+    if (mp>=RAM) mp = 0;
+    if (sp>=STACK) sp = 0;
+    if (csp>=CALL_STACK) csp = 0;
+    pp++;
+    showDebug();
+    if (pp > code.length-1) return false;
+    return true;
+    return false;
+}
+
+
+$('#stepbtn').onclick = function() {
+     stepping = true;
+     code=$('#code').value;
+     step();
+    $('#stepbtn').blur();
+}
+
+$('#stopbtn').onclick = function() {
+    stepping = true;
+    pp = 0;
+    reset();
+    $('#dbginfo').innerHTML = "";
+    $('#stopbtn').blur();
+}
+
+$('#leftbtn').onmousedown=function() {
+    m[0] |= 1<<0;}
+$('#leftbtn').onmouseup=function() {
+    m[0] &= ~(1<<0);
+}
+$('#rightbtn').onmousedown=function() {
+    m[0] |= 1<<1;}
+$('#rightbtn').onmouseup=function() {
+    m[0] &= ~(1<<1);
+}
+$('#upbtn').onmousedown=function() {
+    m[0] |= 1<<2;}
+$('#upbtn').onmouseup=function() {
+    m[0] &= ~(1<<2);
+}
+$('#downbtn').onmousedown=function() {
+    m[0] |= 1<<3;}
+$('#downbtn').onmouseup=function() {
+    m[0] &= ~(1<<3);
+}
+$('#spacebtn').onmousedown=function() {
+    m[0] |= 1<<4;}
+$('#spacebtn').onmouseup=function() {
+    m[0] &= ~(1<<4);
+}
+$('#lshiftbtn').onmousedown=function() {
+    m[0] |= 1<<5;}
+$('#lshiftbtn').onmouseup=function() {
+    m[0] &= ~(1<<5);
+}
+$('#xbtn').onmousedown=function() {
+    m[0] |= 1<<6;}
+$('#xbtn').onmouseup=function() {
+    m[0] &= ~(1<<6);
+}
+$('#cbtn').onmousedown=function() {
+    m[0] |= 1<<7;}
+$('#cbtn').onmouseup=function() {
+    m[0] &= ~(1<<7);
+}
+
+$('#dbgbtn').onclick=dbgbtn;
+
+reset();
+createDisplay();
+
+setInterval(function() {
+    if (!stepping)
+    for(var i = 0; i < 3200; i++)
+        if (!step()) break;
+    updateDisplayNew();
+}, 100);
+}
+</script>
+</head>
+<body>
+<div id="outer">
+<div id="cells"></div>
+<div id="spacebtn" class='btn' style='width:30px;height:40px;position:absolute;top:150px;left:50px;'></div>
+<div style='position:absolute;top:232px;left:73px;font-size:10px'>space</div>
+
+<div id="rightbtn" class='btn' style='width:1px; height:10px; position:absolute;top:130px; left:550px;'> </div>
+<div style='position:absolute;top:180px; left:557px;font-size:10px'>right</div>
+
+<div id="leftbtn" class='btn' style='width:1px;height:10px; position:absolute;top:130px; left:450px;'> </div>
+<div style='position:absolute;top:180px; left:461px;font-size:10px'>left</div>
+
+<div id="upbtn" class='btn' style='width:1px;height:10px; position:absolute;top:80px; left:500px;'> </div>
+<div style='position:absolute;top:130px; left:514px;font-size:10px'>up</div>
+
+<div id="downbtn" class='btn' style='width:1px;height:10px; position:absolute;top:180px;left:500px;'> </div>
+<div style='position:absolute;top:230px; left:506px;font-size:10px'>down</div>
+
+<div id="lshiftbtn" class='btn' style='width:1px;height:10px; position:absolute;top:70px;left:50px;'> </div>
+<div style='position:absolute;top:120px; left:56px;font-size:10px'>lshift</div>
+
+<div id="xbtn" class='btn' style='width:1px;height:10px; position:absolute;top:90px;left:120px;'> </div>
+<div style='position:absolute;top:140px; left:126px;font-size:10px'>x</div>
+
+
+<div id="cbtn" class='btn' style='width:1px;height:10px; position:absolute;top:150px;left:150px;'> </div>
+<div style='position:absolute;top:200px; left:156px;font-size:10px'>c</div>
+</div>
+
+
+<div><span id='cmdsp' style='font-family:monospace; font-size:8px;color:#fff;width:600px'></span></div>
+<div style="float:left;margin-top:10px">
+<textarea id='code' style='overflow:auto;width:auto;height:auto;font-size:11px;font-family:monospace;color:#eee;background:#334'>
+>n9^vf>:this program is a sample that just fills all ram bytes with 0b11111111
+> move to 1st video byte
+n9 set negative offset (-6) for later short jump
+^ push offset
+vf set byte to 0xFF
+> move to next byte
+: short jump back
+</textarea><br/>
+<button id='runbtn'>Run</button>
+<button id='stepbtn'>Step</button>
+<button id='stopbtn'>Stop</button>
+</div>
+<div style="color:#fff;display:block;float:left;margin-top:10px;margin-left:10px; font-size:10px;color:#fff; font-family:monospace">
+    <input type="color" id="html5colorpicker" class="form-control"  onchange="document.getElementById('html5colorpicker').blur(); document.getElementById('outer').style.background = document.getElementById('html5colorpicker').value;" value="#ff0000" />
+    <button id='dbgbtn'>Show debug</button>
+    <pre id='dbginfo'>
+                        Changelog:
+05-May-2015:
++ stack reverse now takes into account stack pointer
++ display cells using background images, not border/background color to improve view on different displays
++ !!! addresses used once for jump/call now will be removed from stack
+</pre>
+</div>
+
+
+</body>
+</html>
