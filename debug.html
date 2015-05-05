@@ -225,7 +225,7 @@ case '"': s[sp] = s[sp-1]; sp++; break;
 case '\'': sp--; break;
 case ',': var temp=sp[sp-1];sp[sp-1]=sp[sp-2];sp[sp-2]=temp; break;
 case '_': sp=0; break;
-case 'x': s = s.slice(0,sp); s.reverse(); break;
+case 'x': s = s.slice(0,sp); s.reverse(); for (var i=sp; i<STACK; i++) s[i]=0; break;
 case '<': mp-=mstep; break;
 case '>': mp+=mstep; break;
 case '[': mstep/=2; mstep=mstep<1?1:mstep; break;
