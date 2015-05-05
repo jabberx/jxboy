@@ -221,7 +221,7 @@ case '^': s[sp] = m[mp]; sp++; break;
 case 'y': sp--; m[mp] = s[sp]; break;
 case '"': s[sp] = s[sp-1]; sp++; break;
 case '\'': sp--; break;
-case ',': var temp=sp[sp-1];sp[sp-1]=sp[sp-2];sp[sp-2]=temp; break;
+case ',': var temp=s[sp-1];s[sp-1]=s[sp-2];s[sp-2]=temp; break;
 case '_': sp=0; break;
 case 'x': s = s.slice(0,sp); s.reverse(); for (var i=sp; i<STACK; i++) s[i]=0; break;
 case '<': mp-=mstep; break;
@@ -539,6 +539,7 @@ vf set byte to 0xFF
 + stack reverse now takes into account stack pointer
 + display cells using background images, not border/background color to improve view on different displays
 + !!! addresses used once for jump/call now will be removed from stack
++ not working stack swap fixed
 </pre>
 </div>
 
