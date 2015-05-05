@@ -244,7 +244,7 @@ case ':': pp += s[sp-1]-127-1; sp--; break;
 case '#': pp = (s[sp-2]+(s[sp-1]<<8))-1; sp--; sp--; break;
 case '`': cs[csp] = pp; csp++; pp += s[sp-1]-127-1; sp--; break;
 case '@': cs[csp] = pp; csp++; pp = (s[sp-2]+(s[sp-1]<<8))-1; sp--; sp--; break;
-case ';': pp = cs[csp-1]-1; csp--; break;
+case ';': pp = cs[csp-1]; csp--; break;
 case '{': m[mp-1] = m[mp]; break;
 case '}': m[mp+1] = m[mp]; break;
 case '(': var temp=m[mp-1];m[mp-1]=m[mp];m[mp]=temp; break;
