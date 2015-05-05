@@ -66,6 +66,115 @@ g0 can be stripped if you are sure that A contains zero: _A^^K}#<br/>
 
 <p>Assembler currently is not available, so programming must be done in bytecode. There is 82 possible machine codes, each code is 1 byte and is printable character.</p>
 
+<p><b>UPD: raw assembler script here:</b></p>
+<p>Usage: you define labels by inserting label name inside S symbols: S#####S<br/>
+Before any jump or call command you mention label name inside J symbols: J####J<br/>
+Use lowercase (or avoid S and J inside).<br/>
+Example: Slabel1Sc0dec0dec0deJlabel1J:</p>
+<textarea>
+hb = dict()
+hb['0']='g'
+hb['1']='h'
+hb['2']='i'
+hb['3']='j'
+hb['4']='k'
+hb['5']='l'
+hb['6']='m'
+hb['7']='n'
+hb['8']='o'
+hb['9']='p'
+hb['a']='q'
+hb['b']='r'
+hb['c']='s'
+hb['d']='t'
+hb['e']='u'
+hb['f']='v'
+
+def hbyte(b):
+	h = hex(b)[-2:].strip('x').lower()
+	if len(h)==1:
+		return 'g'+h
+	return hb[h[0]]+h[1]
+	
+
+def asm(prog):
+	res = list()
+	ads = dict()
+	cur = 0
+	jing = False
+	jinged = False
+	sing = False
+	snam = list()
+	for cmd in prog:
+		if cmd == 'S' and not sing:
+			sing = True
+			snam = list()
+		elif cmd == 'S' and sing:
+			sing = False
+			ads["".join(snam)] = cur
+			print('adding ' + "".join(snam) + " at " + str(cur))
+		if sing and not cmd == 'S':
+			snam.append(cmd)
+		if cmd == 'J' and jing:
+			jing = False
+			jinged = True
+		elif cmd == 'J' and not jing:
+			jing = True
+		if not (cmd == 'J' or jing or sing or cmd == 'S'):
+			cur += 1
+			if jinged:
+				if cmd == '#' or cmd == '@':
+					cur += 6
+				else:
+					cur += 3
+				jinged = False
+	cur = 0
+	for cmd in prog:
+		if cmd == 'S' and not sing:
+			sing = True
+		elif cmd == 'S' and sing:
+			sing = False
+		if cmd == 'J' and jing:
+			jing = False
+			jinged = True
+		elif cmd == 'J' and not jing:
+			jing = True
+			snam = list()
+		if jing and cmd != 'J':
+			snam.append(cmd)
+		if not (cmd == 'J' or jing or sing or cmd == 'S'):
+			cur += 1
+			if jinged:
+				if cmd == '#' or cmd == '@':
+					cur += 9
+					if not ads.__contains__("".join(snam)):
+						print("error: no label " + "".join(snam))
+					addr = ads["".join(snam)]
+					laddr = addr&255
+					haddr = addr>>8
+					res.append('^')
+					res.append(hbyte(laddr))
+					res.append('^,')
+					res.append(hbyte(haddr))
+					res.append('^,y')
+				else:
+					cur += 6
+					if not ads.__contains__("".join(snam)):
+						print("error: no label " + "".join(snam))
+					addr = ads["".join(snam)]
+					print("addr",addr)
+					raddr = addr - cur + 128
+					print("raddr",raddr)
+					if raddr < 0 or raddr > 255:
+						print("short jump to "+ "".join(snam) +" is too far")
+					res.append('^')
+					res.append(hbyte(raddr))
+					res.append('^,y')
+				jinged = False
+			res.append(cmd)
+	return "".join(res)
+</textarea>
+
 <pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
 </code></pre>
 
