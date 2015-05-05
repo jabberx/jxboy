@@ -74,6 +74,7 @@ Example: Slabel1Sc0dec0dec0deJlabel1J:</p>
 <b>The script is in Python2.7, call asm function with your program as string argument, 
 result will contain all labels resolved:</b>
 <textarea width = 200 height = 200>
+# updated at 16.00 GMT 5 May 2015
 hb = dict()
 hb['0']='g'
 hb['1']='h'
@@ -165,7 +166,10 @@ def asm(prog):
 						print("error: no label " + "".join(snam))
 					addr = ads["".join(snam)]
 					print("addr",addr)
-					raddr = addr - cur + 128
+					if (addr - cur) > 0:
+						raddr = addr - cur + 128-1
+					else:
+						raddr = addr - cur + 128
 					print("raddr",raddr)
 					if raddr < 0 or raddr > 255:
 						print("short jump to "+ "".join(snam) +" is too far")
