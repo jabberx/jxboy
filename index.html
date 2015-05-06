@@ -66,12 +66,10 @@ g0 can be stripped if you are sure that A contains zero: _A^^K}#<br/>
 
 <p>Assembler currently is not available, so programming must be done in bytecode. There is 82 possible machine codes, each code is 1 byte and is printable character.</p>
 
-<p><b>For convenience (to avoid hand-altering of short/far jump/call addresses) here is labels resolver script (under testing):</b></p>
+<p><b>Labels resolver script (under testing):</b></p>
 <iframe width="100%" height="300" src="https://jsfiddle.net/gbc5gwne/16/embedded/result/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
-</code></pre>
-<p>Generated code is safe for stack and current variable.<br/>
+<p>it can be used to avoid manual calculation of short/far jump/call addresses</p>
+<p>Generated code is safe for stack and current memory cell.<br/>
 Example fills h0 (0x10 or 16) screen bytes in a loop then stops: Ah0KSloopSM&gt;fvADJloopJ!.<br/>
 A used as count variable here<br/>
 K (with >) used to access first screen byte<br/>
@@ -81,6 +79,9 @@ SloopS is label definition
 JloopJ is address placeholder
 </p>
 
+<br/>
+<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
+</code></pre>
 <p>This includes operations with stack (^y"',_x), simple 8-bit arithmetic (+-/*),</p>
 
 <p>logical operators (&amp;|~%) (% is xor here), copy/swap commands ({}()), far/short calls (@`),</p>
