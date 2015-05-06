@@ -310,6 +310,7 @@ function reset() {
     csp = 0;
     pp = 0;
     mstep = 1;   
+    using_mp = true;
 for (var i = 0; i < RAM; i++) m[i]=0;
 for (var i = 0; i < CALL_STACK; i++) cs[i]=0;
 for (var i = 0; i < STACK; i++) s[i]=0;
@@ -411,7 +412,6 @@ function step() {
     showDebug();
     if (pp > code.length-1) return false;
     return true;
-    return false;
 }
 
 
