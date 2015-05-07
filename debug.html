@@ -132,6 +132,7 @@ const RAM = 1024;
 const CALL_STACK = 2048;
 const STACK = 1024;
 
+var smode = 0;
 var stepping = true;
 var m = [];
 var s = [];
@@ -297,6 +298,8 @@ case 'G' : if (using_mp) mp_bak = mp; mp = gaddr; using_mp = false; break;
 case 'M' : if (!using_mp) mp = mp_bak; using_mp = true; break;
 case 'R' : m[mp] >>= 1; break;
 case 'L' : m[mp] <<= 1; m[oaddr] = m[mp] > 255 ? 1 : 0; m[mp] &= 255; break;
+case 'X' : if (smode == 0) smode = 1; else smode = 0; break;
+case 'U' : updateDisplayNew(); break;
     }
 }
 
@@ -311,6 +314,7 @@ function reset() {
     pp = 0;
     mstep = 1;   
     using_mp = true;
+    smode = 0;
 for (var i = 0; i < RAM; i++) m[i]=0;
 for (var i = 0; i < CALL_STACK; i++) cs[i]=0;
 for (var i = 0; i < STACK; i++) s[i]=0;
@@ -495,7 +499,7 @@ setInterval(function() {
     if (!stepping)
     for(var i = 0; i < speed; i++)
         if (!step()) break;
-    updateDisplayNew();
+    if (smode == 0) updateDisplayNew();
 }, 100);
 }
 </script>
@@ -555,6 +559,9 @@ vf set byte to 0xFF
     <button id='dbgbtn'>Show debug</button>
     <pre id='dbginfo'>
                         Changelog:
+07-May-2015:
++ add X and U commands
+
 06-May-2015:
 + ret fixed
 + call fixed
