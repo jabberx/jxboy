@@ -231,8 +231,8 @@ case '[': mstep/=2; mstep=mstep<1?1:mstep; break;
 case ']': mstep*=2; break;
 case 'z': mstep=1; break;
 case '=': mp=s[sp-2]+(s[sp-1]<<8); break;
-case '+': var i=m[mp]+m[mp+1];m[mp]=i&255;m[oaddr]=(i-m[mp])>>8; break;
-case '-': var i=m[mp]-m[mp+1];m[mp]=i&255;m[naddr]=i>=0?0:255-m[mp]; break;
+case '+': var i=m[mp]+m[mp+1];m[mp]=i&255;m[oaddr]=((i-m[mp])>>8)>0?1:0; break;
+case '-': var i=m[mp]-m[mp+1];m[mp]=i&255;m[naddr]=i>=0?0:1; break;
 case '*': var i=m[mp]*m[mp+1];m[mp]=i&255;m[oaddr]=(i-m[mp])>>8; break;
 case '/': var i=m[mp]/m[mp+1];m[mp]=Math.floor(i);m[gaddr]=(i-Math.floor(i))*100; break;
 case '|': m[mp] |= m[mp+1]; break;
@@ -561,6 +561,7 @@ vf set byte to 0xFF
                         Changelog:
 07-May-2015:
 + add X and U commands
++ fixed setting of negative flag during sub
 
 06-May-2015:
 + ret fixed
