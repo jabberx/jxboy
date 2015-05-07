@@ -1,0 +1,259 @@
+<html>
+<head>
+<style>
+.codearea {
+    width:300px;
+    height:400px;
+    font-family:monospace;
+    color:#eee;
+    background:#335;
+    overflow:auto;    
+}
+
+.smallcodearea {
+    width:300px;
+    height:100px;
+    font-family:monospace;
+    color:#eee;
+    background:#335;
+    overflow:auto;    
+}
+</style>
+<script>
+var dict = {}
+dict['NOP']='w'
+dict['HALT']='.'
+dict['PUSH']='^'
+dict['POP']='y'
+dict['DUP']='"'
+dict['DROP']='\''
+dict['SWAP']=','
+dict['SCLR']='_'
+dict['SREV']='x'
+dict['LEFT']='<'
+dict['RIGHT']='>'
+dict['STEPD']='['
+dict['STEPI']=']'
+dict['STEPR']='z'
+dict['ASET']='='
+dict['ADD']='+'
+dict['SUB']='-'
+dict['MUL']='*'
+dict['DIV']='/'
+dict['OR']='|'
+dict['AND']='&'
+dict['NOT']='~'
+dict['XOR']='%'
+dict['RET']=';'
+dict['COPYL']='{'
+dict['COPYR']='}'
+dict['SWAPL']='('
+dict['SWAPR']=')'
+dict['MODE']='X'
+dict['UPD']='U'
+dict['PPUSH']='\\'
+dict['DPUSH']='$'
+dict['INC']='I'
+dict['DEC']='D'
+dict['SHL']='L'
+dict['SHR']='R'
+dict['ASETN']='N'
+dict['ASETO']='O'
+dict['ASETG']='G'
+dict['ASETA']='A'
+dict['ASETB']='B'
+dict['ASETC']='C'
+dict['ASETJ']='J'
+dict['ASETK']='K'
+dict['ASETM']='M'
+dict['ASETF']='F'
+
+var jdict = {}
+jdict['JZ']='?'
+jdict['JNZ']='!'
+jdict['JUMP']=':'
+jdict['FJUMP']='#'
+jdict['CALL']='`'
+jdict['FCALL']='@'
+
+var hb = {}
+hb['0']='g'
+hb['1']='h'
+hb['2']='i'
+hb['3']='j'
+hb['4']='k'
+hb['5']='l'
+hb['6']='m'
+hb['7']='n'
+hb['8']='o'
+hb['9']='p'
+hb['a']='q'
+hb['b']='r'
+hb['c']='s'
+hb['d']='t'
+hb['e']='u'
+hb['f']='v'
+
+function hbyte(b) {
+	var h = Number(b).toString(16)
+	if (h.length==1) {
+		return 'g'+h
+	}
+	return hb[h[0]]+h[1]
+}
+
+function parse(cmdlist) {
+    var res = ""
+    for (var i = 0; i < cmdlist.length; i++) {
+        var cmd = cmdlist[i].split(';')[0].trim();
+        if (cmd in dict) 
+        {
+            res += (dict[cmd]);
+        }
+        else
+        {
+            if (cmd.endsWith(':'))
+            {
+                res += "S"+cmd.split(':')[0].toLowerCase()+"S";
+            }
+            
+            else if(cmd.startsWith("LOAD"))
+            {
+                cmd = cmd.substring(4).trim();
+                var val = parseInt(cmd);
+                res += hbyte(val);
+            }
+            
+            else
+            {
+                if (cmd.split(' ')[0] in jdict)
+                {
+                    res += "J"+cmd.split(' ')[1].toLowerCase()+"J";
+                    res += jdict[cmd.split(' ')[0]];
+                }
+            }
+        }
+    }
+    return res;
+}
+
+
+function asm(prog) {
+	var res = ""
+	var ads = {}
+	var cur = 0
+	var jing = false
+	var jinged = false
+	var sing = false
+	var snam = ""
+	for(var x = 0, cmd=''; cmd = prog.charAt(x); x++) {
+		if (cmd == 'S' && (!sing)) {
+			sing = true
+			snam = ""
+		} else if (cmd == 'S' && sing) {
+			sing = false
+			ads[snam] = cur
+			console.log('adding ' + snam + " at " + cur)
+		}
+		if (sing && cmd != 'S') {
+			snam += cmd
+		}
+		if (cmd == 'J' && jing) {
+			jing = false
+			jinged = true
+		} else if (cmd == 'J' && (!jing)) {
+			jing = true
+		}
+		if (!(cmd == 'J' || jing || sing || cmd == 'S')) {
+			cur += 1
+			if (jinged) {
+				if (cmd == '#' || cmd == '@') {
+					cur += 10
+                } else if (cmd == '`' || cmd == ':' || 
+                           cmd == '?' || cmd == '!') {
+					cur += 6
+				}
+				jinged = false
+			}
+		}
+	}
+	cur = 0
+	for(var x = 0, cmd=''; cmd = prog.charAt(x); x++) {
+		if (cmd == 'S' && (!sing)) {
+			sing = true
+		} else if (cmd == 'S' && sing) {
+			sing = false
+		}
+		if (cmd == 'J' && jing) {
+			jing = false
+			jinged = true
+		} else if (cmd == 'J' && (!jing)) {
+			jing = true
+			snam = ""
+		}
+		if (jing && cmd != 'J') {
+			snam += cmd
+		}
+		if (!(cmd == 'J' || jing || sing || cmd == 'S')) {
+			cur += 1
+			if (jinged) {
+				if (cmd == '#' || cmd == '@') {
+					cur += 10
+					if (!(snam in ads)) {
+						res += "error: no label " + snam
+						return res
+					}
+                    var addr = ads[snam]
+                    var laddr = addr&255
+					var haddr = addr>>8
+					res += ('^')
+					res += (hbyte(laddr))
+					res += ('^,')
+					res += (hbyte(haddr))
+					res += ('^,y')
+				} else if (cmd == '`' || cmd == ':' || 
+                           cmd == '?' || cmd == '!') {
+					cur += 6
+					if (!(snam in ads)) {
+						res += "error: no label " + snam
+						return res
+					}
+					var addr = ads[snam]
+                    var raddr = addr - cur + 128      
+					console.log("addr:"+addr)
+					console.log("raddr:"+raddr)
+					if (raddr < 0 || raddr > 255) {
+						res += ("short jump/call to "+ snam +" is too far. use far jump/call")
+						return res
+					}
+					res += ('^')
+					res += (hbyte(raddr))
+					res += ('^,y')
+				}
+				jinged = false
+			}
+			res += cmd
+		}
+	}
+	return res
+}
+
+window.document.onload = function() {
+var _in = document.getElementById('in');
+var out = document.getElementById('out');
+_in.onkeyup = 
+    function() {
+        out.value = asm(parse(_in.value.toUpperCase().split('\n')));
+    }
+}
+</script>
+</head>
+<body>
+<textarea class="codearea" id="in">
+enter asm code here
+</textarea><br/>
+<textarea class="smallcodearea" id="out">
+output will be here
+</textarea>
+</body>
+</html>
