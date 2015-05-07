@@ -536,14 +536,8 @@ setInterval(function() {
 
 <div><span id='cmdsp' style='font-family:monospace; font-size:8px;color:#fff;width:600px'></span></div>
 <div style="float:left;margin-top:10px">
-<textarea id='code' style='overflow:auto;width:auto;height:auto;font-size:11px;font-family:monospace;color:#eee;background:#334'>
->n9^vf>:this program is a sample that just fills all ram bytes with 0b11111111
-> move to 1st video byte
-n9 set negative offset (-6) for later short jump
-^ push offset
-vf set byte to 0xFF
-> move to next byte
-: short jump back
+<textarea id='code' style='overflow:auto;width:200px;height:100px;font-size:11px;font-family:monospace;color:#eee;background:#334'>
+enter byte-code here (use assembler)
 </textarea><br/>
 <button id='runbtn'>Run</button>
 <button id='stepbtn'>Step</button>
