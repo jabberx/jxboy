@@ -291,7 +291,7 @@ case 'O' : if (using_mp) mp_bak = mp; mp = oaddr; using_mp = false; break;
 case 'A' : if (using_mp) mp_bak = mp; mp = aaddr; using_mp = false; break;
 case 'B' : if (using_mp) mp_bak = mp; mp = baddr; using_mp = false; break;
 case 'C' : if (using_mp) mp_bak = mp; mp = caddr; using_mp = false; break;
-case 'J' : if (using_mp) mp_bak = mp; mp = daddr; using_mp = false; break;
+case 'Q' : if (using_mp) mp_bak = mp; mp = daddr; using_mp = false; break;
 case 'K' : if (using_mp) mp_bak = mp; mp = eaddr; using_mp = false; break;
 case 'F' : if (!using_mp) mp = mp_bak; mp = faddr; using_mp = true; break;
 case 'G' : if (using_mp) mp_bak = mp; mp = gaddr; using_mp = false; break;
@@ -553,6 +553,9 @@ enter byte-code here (use assembler)
     <button id='dbgbtn'>Show debug</button>
     <pre id='dbginfo'>
                         Changelog:
+08-May-2015:
++ J changed to Q (conflict with byte-code preprocessor)
+
 07-May-2015:
 + add X and U commands
 + fixed setting of negative flag during sub
