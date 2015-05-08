@@ -234,7 +234,7 @@ case '=': mp=s[sp-2]+(s[sp-1]<<8); break;
 case '+': var i=m[mp]+m[mp+1];m[mp]=i&255;m[oaddr]=((i-m[mp])>>8)>0?1:0; break;
 case '-': var i=m[mp]-m[mp+1];m[mp]=i&255;m[naddr]=i>=0?0:1; break;
 case '*': var i=m[mp]*m[mp+1];m[mp]=i&255;m[oaddr]=(i-m[mp])>>8; break;
-case '/': var i=m[mp]/m[mp+1];m[mp]=Math.floor(i);m[gaddr]=(i-Math.floor(i))*100; break;
+case '/': var i=m[mp]/m[mp+1];m[gaddr]=m[mp]%m[mp+1];m[mp]=Math.floor(i); break;
 case '|': m[mp] |= m[mp+1]; break;
 case '&': m[mp] &= m[mp+1]; break;
 case '~': m[mp] = ~m[mp]; break;
@@ -555,6 +555,7 @@ enter byte-code here (use assembler)
                         Changelog:
 08-May-2015:
 + J changed to Q (conflict with byte-code preprocessor)
++ division additional result now holds remainder, not fraction
 
 07-May-2015:
 + add X and U commands
