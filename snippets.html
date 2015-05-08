@@ -1,0 +1,123 @@
+<html>
+<head>
+<style>
+* {
+font-family: monospace;
+background: #345;
+color: #ffe;
+}
+</style>
+</head>
+<body>
+<h2>Snippets</h2>
+<a href='#pset'>set pixel</a><br/>
+<a href='#pclr'>clear pixel</a><br/> 
+<pre id="pset">
+;---------------------------
+Pset:      ; sets pixel, current memory cell 
+push       ; should hold pixe position (x + y*16)
+dpush
+push
+shr
+shr
+shr
+inc
+push
+load 0
+push
+aset
+drop
+drop
+push
+swap
+pop
+right
+push
+load 8
+left
+div
+asetg
+push
+asetm
+pop
+copyr
+swap
+load 1
+right
+jz Pset_noloop1
+Pset_loop1:
+left
+shl
+right
+dec
+jnz Pset_loop1
+Pset_noloop1:
+pop
+left
+or
+right
+pop
+aset
+drop
+drop
+pop
+ret
+;---------------------------
+</pre>
+
+<pre id="pclr">
+;---------------------------
+Pclr:      ; clears pixel, current memory cell 
+push       ; should hold pixe position (x + y*16)
+push
+dpush
+push
+shr
+shr
+shr
+inc
+push
+load 0
+push
+aset
+drop
+drop
+push
+swap
+pop
+right
+push
+load 8
+left
+div
+asetg
+push
+asetm
+pop
+copyr
+swap
+load 1
+right
+jz Pclr_noloop1
+Pclr_loop1:
+left
+shl
+right
+dec
+jnz Pclr_loop1
+Pclr_noloop1:
+pop
+left
+not
+and
+right
+pop
+aset
+drop
+drop
+pop
+ret
+;---------------------------
+</pre>
+</body>
+</html>
