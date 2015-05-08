@@ -93,7 +93,7 @@ JloopJ is address placeholder
 
 <h3>
 <a id="machine-codes" class="anchor" href="#machine-codes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Machine codes</h3>
-<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCJKFMNOG
+<pre><code>w.^y"',_x$&lt;&gt;[]z=+-*/|&amp;~%?!:#`@;{}()0123456789abcdefghijklmnopqrstuv\IDLRABCQKFMNOG
 </code></pre>
 <p>There is 82 (53 if count LOAD as one) possible machine codes, each code is 1 byte and is printable character.</p>
 <p>This includes operations with stack (^y"',_x), simple 8-bit arithmetic (+-/*),</p>
@@ -104,7 +104,7 @@ JloopJ is address placeholder
 
 <p>ram pointer movement (&lt;&gt;[]=) and setting values of ram cells ($\0123456789abcdefghijklmnopqrstuv).</p>
 
-<p>ram pointer shortcut system (ABCJK NOG F NOG M)</p>
+<p>ram pointer shortcut system (ABCQK NOG F NOG M)</p>
 
 <h1>
 <a id="detailed-description" class="anchor" href="#detailed-description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Detailed description:</h1>
@@ -238,7 +238,7 @@ JloopJ is address placeholder
 <p><code>A jump to A shortcut cell, remember current RAM pointer address</code></p>
 <p><code>B jump to B shortcut cell, remember current RAM pointer address</code></p>
 <p><code>C jump to C shortcut cell, remember current RAM pointer address</code></p>
-<p><code>J jump to J shortcut cell, remember current RAM pointer address</code></p>
+<p><code>Q jump to Q shortcut cell, remember current RAM pointer address</code></p>
 <p><code>K jump to K shortcut cell (keyboard byte), remember current RAM pointer address</code></p>
 <p><code>M restore RAM pointer address</code></p>
 <p><code>F jump to a first free (non-system/no shortcut) RAM byte, RAM pointer address will be lost</code></p>
@@ -248,7 +248,7 @@ JloopJ is address placeholder
 input byte (K shortcut) (1) - video bytes (32) - neg byte (1)<br/> 
 - overflow byte (1) - fractional division result byte (1)<br/>
 - A shortcut (1) - empty (1) - B shortcut (1) - empty (1)<br/>
-- J shortcut (1) - empty (1) - F shortcut (1) - empty(...rest of ram...)<br/>
+- Q shortcut (1) - empty (1) - F shortcut (1) - empty(...rest of ram...)<br/>
 </div>
 
 
