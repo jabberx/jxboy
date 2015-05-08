@@ -145,7 +145,7 @@ JloopJ is address placeholder
 
 <p><code>* multiply with right cell, result in current cell, high byte to O (overflow) cell</code></p>
 
-<p><code>/ div to right, quotient after dot (multiplied by 100) will go to G cell</code></p>
+<p><code>/ div to right, remainder will go to G cell</code></p>
 
 <p><code>| or with right cell value</code></p>
 
@@ -217,7 +217,7 @@ JloopJ is address placeholder
 
 <p><code>\ push program pointer address to a stack (low then high)</code></p>
 
-<p><code>$ push data pointer address to a stack  (low then high)</code></p>
+<p><code>$ push data pointer address to a stack (low then high)</code></p>
 
 <p><code>I increase current cell value by 1, set O flag accordingly</code></p>
 
@@ -234,7 +234,7 @@ JloopJ is address placeholder
 <p><b>Memory pointer shortcuts:</b></p>
 <p><code>N jump to negative flag cell, remember current RAM pointer address</code></p>
 <p><code>O jump to overflow cell, remember current RAM pointer address</code></p>
-<p><code>G jump to fractional division result cell, remember current RAM pointer address</code></p>
+<p><code>G jump to division remainder cell, remember current RAM pointer address</code></p>
 <p><code>A jump to A shortcut cell, remember current RAM pointer address</code></p>
 <p><code>B jump to B shortcut cell, remember current RAM pointer address</code></p>
 <p><code>C jump to C shortcut cell, remember current RAM pointer address</code></p>
@@ -246,7 +246,7 @@ JloopJ is address placeholder
 <div style="clear:both;font-size:10px">
 <b>RAM layout</b>:<br/>
 input byte (K shortcut) (1) - video bytes (32) - neg byte (1)<br/> 
-- overflow byte (1) - fractional division result byte (1)<br/>
+- overflow byte (1) - remainder byte (1)<br/>
 - A shortcut (1) - empty (1) - B shortcut (1) - empty (1)<br/>
 - Q shortcut (1) - empty (1) - F shortcut (1) - empty(...rest of ram...)<br/>
 </div>
