@@ -1,4 +1,5 @@
 # jxboy
 virtual game console emulator
 
-NOT READY YET
+READY, SEE http://jabberx.github.io/jxboy/
+or gh-pages branch
